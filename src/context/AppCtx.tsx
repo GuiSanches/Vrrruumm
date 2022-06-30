@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Pilot, UserContextType, UserOverview } from './@types.App';
+import { Pilot, Team, UserContextType, UserOverview } from './@types.App';
 
 export const UserContext = React.createContext<UserContextType | null>(null);
 
@@ -7,11 +7,12 @@ type Props = {
     children: React.ReactNode
 }
 
-const MOCK_USER : Pilot = {
+const MOCK_USER : Team = {
     numberOfWins: 0,
     firstAndLastYearsOfData: [new Date(), new Date()],
-    type: 'Pilot',
-    name: 'Paula Tejano'
+    type: 'Team',
+    name: 'Paula Tejano',
+    numberOfDistinctPilots: 0
 }
 
 const UserProvider: React.FC<Props> = ({ children }) => {

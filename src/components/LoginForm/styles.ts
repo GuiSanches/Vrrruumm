@@ -73,6 +73,7 @@ export const Button = styled.button`
   text-align: center;
   margin-top: 7.5em;
   transition: all 0.1s ease-in;
+  cursor: pointer;
 
   &: hover {
     background: #f7f7f7;

@@ -10,7 +10,6 @@ const useAuthenticationFlow = () => {
 
     useEffect(() => {
         if(user === null) Router.push('/login');
-        else Router.push('/home');
     }, [user]);
 
     return null;

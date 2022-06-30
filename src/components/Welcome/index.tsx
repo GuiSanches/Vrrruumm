@@ -3,13 +3,14 @@ import { Container } from './styles';
 
 interface Props {
     name: string;
+    type: string;
 }
 
-const Welcome: FC<Props> = ({ name }) => {
+const Welcome: FC<Props> = ({ name, type }) => {
 
     return (
         <Container>
-            Seja bem vindo: {name}
+            Seja bem vinde: {name} - ({type})
         </Container>
     );
 }
