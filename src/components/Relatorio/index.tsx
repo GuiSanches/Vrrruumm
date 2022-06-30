@@ -1,5 +1,6 @@
 import { FC } from "react";
 import { UserOverview } from "../../context/@types.App"
+import Table from "../MaterialTable";
 import { Container } from "./styles"
 
 interface Props {
@@ -10,8 +11,7 @@ const Relatorio: FC<Props> = ({ user }) => {
 
     return (
         <Container>
-            Ola
-
+            <Table />
         </Container>
     )
 }

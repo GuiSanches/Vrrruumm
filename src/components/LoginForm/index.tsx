@@ -1,5 +1,5 @@
 import Router from "next/router";
-import { FC, useContext, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 import { UserContextType } from "../../context/@types.App";
 import { UserContext } from "../../context/AppCtx";
 import { Form, H3, Input, Label, Button, Container, InputWrap } from "./styles";
@@ -11,8 +11,12 @@ const LoginForm: FC = () => {
 
     const handleLogin = () => {
         login(name, password);
-        if (user !== null) Router.push('/home');
+
     }
+
+    useEffect(() => {
+        if (user !== null) Router.push('/home');
+    }, [user])
 
     return (
         <Container>
