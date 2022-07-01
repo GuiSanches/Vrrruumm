@@ -1,4 +1,4 @@
-type UserTypes = 'Admin' | 'Team' | 'Pilot'
+export type UserTypes = 'Admin' | 'Team' | 'Pilot'
 
 interface User {
     name: string;

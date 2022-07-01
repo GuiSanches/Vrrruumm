@@ -89,7 +89,7 @@ const Home: NextPage = () => {
                     <Container>
                         <>
                             {showUserOverView}
-                            <UserActions />
+                            <UserActions userType={user.type} />
                         </>
                     </Container>
                     <Link onClick={() => Router.push('/relatorios')} >Relatórios</Link>
