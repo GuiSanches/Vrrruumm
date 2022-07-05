@@ -1,6 +1,6 @@
 import { User } from "./../../src/context/@types.App";
 
-export default async function getRelatorios(user: User) {
+export default async function getPilotoRelatorios(user: User) {
   return fetch(`http://localhost:8000/api/relatorios`, {
     method: "POST",
     headers: {
@@ -11,9 +11,14 @@ export default async function getRelatorios(user: User) {
   })
     .then((v) => v.json())
     .then((res) => {
-      if (user?.tipo === "Administrador") {
-        return res.relatorio_1.map((v: any) => [v.status, v.resultados]);
-      }
+      return {
+        relatorio1: res.relatorio_5.map((v: any) => [
+          v.nome,
+          v.ano,
+          v.vitorias,
+        ]),
+        relatorio2: res.relatorio_6.map((v: any) => [v.status, v.resultados]),
+      };
     })
     .catch((err) => console.log(err));
 }
