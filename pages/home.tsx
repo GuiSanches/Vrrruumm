@@ -1,102 +1,158 @@
-import type { NextPage } from 'next';
-import { useContext, useMemo } from 'react';
-import useAuthenticationFlow from '../route/AuthenticationFlow';
-import Overview from '../src/components/Overview';
-import UserActions from '../src/components/UserActions';
-import Welcome from '../src/components/Welcome';
-import { Admin, Pilot, Team, UserContextType } from '../src/context/@types.App';
-import { UserContext } from '../src/context/AppCtx';
-import styles from '../styles/Home.module.css';
-import { Container, Link } from '../styles/styles';
-import Router from 'next/router';
+import type { NextPage } from "next";
+import { useContext, useEffect, useMemo, useState } from "react";
+import useAuthenticationFlow from "../route/AuthenticationFlow";
+import Overview from "../src/components/Overview";
+import UserActions from "../src/components/UserActions";
+import Welcome from "../src/components/Welcome";
+import { UserContextType } from "../src/context/@types.App";
+import { UserContext } from "../src/context/AppCtx";
+import styles from "../styles/Home.module.css";
+import { Container, Link } from "../styles/styles";
+import Router from "next/router";
 
 const Home: NextPage = () => {
-    const navigation = useAuthenticationFlow();
-    const { user } = useContext(UserContext) as UserContextType;
+  const navigation = useAuthenticationFlow();
+  const { user } = useContext(UserContext) as UserContextType;
+  const [name, setName] = useState<string>("");
+  const [userInfo, setUserInfo] = useState<any>(null);
+  const [overview, setOverview] = useState<any>(null);
 
-    const showUserOverView = useMemo(() => {
-        console.log('user', user);
-        if (user) {
-            let overview
-            switch (user.type) {
-                case 'Admin': {
-                    const { name, type, ...rest } = user as Admin;
-                    overview = [
-                        {
-                            label: 'Número de pilotos',
-                            content: rest.numberOfPilots
-                        },
-                        {
-                            label: 'Número de corridas',
-                            content: rest.numberOfRaces
-                        },
-                        {
-                            label: 'Número de temporadas',
-                            content: rest.numberOfSeasons
-                        },
-                        {
-                            label: 'Número de Times',
-                            content: rest.numberOfTeams
-                        }
-                    ]
-                }
-                    break;
-                case 'Pilot': {
-                    const { name, type, ...rest } = user as Pilot;
-                    overview = [
-                        {
-                            label: 'Número de vitórias',
-                            content: rest.numberOfWins
-                        },
-                        {
-                            label: 'Primeira e última corrida',
-                            content: `${rest.firstAndLastYearsOfData[0].toLocaleDateString('pt')} - ${rest.firstAndLastYearsOfData[1].toLocaleDateString('pt')}`
-                        },
-                    ]
-                }
-                    break;
-                case 'Team': {
-                    const { name, type, ...rest } = user as Team;
-                    overview = [
-                        {
-                            label: 'Número de vitórias',
-                            content: rest.numberOfWins
-                        },
-                        {
-                            label: 'Primeira e última corrida',
-                            content: `${rest.firstAndLastYearsOfData[0].toLocaleDateString('pt')} - ${rest.firstAndLastYearsOfData[1].toLocaleDateString('pt')}`
-                        },
-                        {
-                            label: 'Número de pilotos distintos',
-                            content: rest.numberOfDistinctPilots
-                        },
-                    ]
-                }
+  useEffect(() => {
+    const fetching = async () => {
+      await fetch(`http://localhost:8000/api/overview`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json",
+        },
+        body: JSON.stringify(user),
+      })
+        .then((v) => v.json())
+        .then((res) => {
+          if (user?.tipo === "Administrador") {
+            setUserInfo({
+              numberOfPilots: res.numberOfPilots[0].qtd_pilotos ?? 0,
+              numberOfTeams: res.numberOfTeams[0].qtd_escuderias ?? 0,
+              numberOfRaces: res.numberOfRaces[0].qtd_corridas ?? 0,
+              numberOfSeasons: res.numberOfSeasons[0].qtd_temporadas ?? 0,
+            });
+          } else if (user?.tipo === "Piloto") {
+            setUserInfo({
+              numberOfWins: res.numberOfWins[0].qtd_vitorias ?? 0,
+              firstAndLastYearsOfData: `${
+                res.firstAndLastYearsOfData[0].prim_ano ?? ""
+              }
+                    - ${res.firstAndLastYearsOfData[0].ult_ano ?? ""}`,
+            });
+          } else if (user?.tipo === "Escuderia") {
+            setUserInfo({
+              numberOfWins: res.numberOfWins[0].qtd_vitorias ?? 0,
+              numberOfPilots: res.numberOfPilots[0].qtd_pilotos ?? 0,
+              firstAndLastYearsOfData: `${
+                res.firstAndLastYearsOfData[0].prim_ano ?? ""
+              }
+                      - ${res.firstAndLastYearsOfData[0].ult_ano ?? ""}`,
+            });
+          }
+        })
+        .catch((err) => console.log(err));
 
-                default:
+      await fetch(`http://localhost:8000/api/name`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json",
+        },
+        body: JSON.stringify(user),
+      })
+        .then((v) => v.json())
+        .then((res) => {
+          setName(res.name);
+        })
+        .catch((err) => console.log(err));
+    };
+    fetching();
+  }, [user]);
 
-            }
-            return <Overview overview={overview} />
-        }
-    }, [user])
-
-    return (
-        <div className={styles.container}>
+  const showUserOverView = useMemo(() => {
+    console.log("user", user);
+    if (user) {
+      switch (user.tipo) {
+        case "Administrador":
+          {
+            setOverview([
+              {
+                label: "Número de pilotos",
+                content: userInfo?.numberOfPilots,
+              },
+              {
+                label: "Número de corridas",
+                content: userInfo?.numberOfRaces,
+              },
+              {
+                label: "Número de temporadas",
+                content: userInfo?.numberOfSeasons,
+              },
+              {
+                label: "Número de Times",
+                content: userInfo?.numberOfTeams,
+              },
+            ]);
+          }
+          break;
+        case "Piloto":
+          {
+            setOverview([
+              {
+                label: "Número de vitórias",
+                content: userInfo?.numberOfWins,
+              },
+              {
+                label: "Primeira e última corrida",
+                content: userInfo?.firstAndLastYearsOfData,
+              },
+            ]);
+          }
+          break;
+        case "Escuderia": {
+          setOverview([
             {
-                user &&
-                <>
-                    <Welcome name={user.name} type={user.type} />
-                    <Container>
-                        <>
-                            {showUserOverView}
-                            <UserActions userType={user.type} />
-                        </>
-                    </Container>
-                    <Link onClick={() => Router.push('/relatorios')} >Relatórios</Link>
-                </>
-            }
-        </div>
-    );
-}
+              label: "Número de vitórias",
+              content: userInfo?.numberOfWins,
+            },
+            {
+              label: "Primeira e última corrida",
+              content: userInfo?.firstAndLastYearsOfData,
+            },
+            {
+              label: "Número de pilotos distintos",
+              content: userInfo?.numberOfPilots,
+            },
+          ]);
+        }
+
+        default:
+      }
+      return <Overview overview={overview} />;
+    }
+  }, [userInfo]);
+
+  return (
+    <div className={styles.container}>
+      {user && (
+        <>
+          <Welcome name={name} type={user.tipo} />
+          <Container>
+            <>
+              {showUserOverView}
+              <UserActions user={user} />
+            </>
+          </Container>
+          <Link onClick={() => Router.push("/relatorios")}>Relatórios</Link>
+        </>
+      )}
+    </div>
+  );
+};
 
 export default Home;
