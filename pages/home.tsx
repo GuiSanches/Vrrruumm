@@ -12,7 +12,7 @@ import Router from "next/router";
 
 const Home: NextPage = () => {
   const navigation = useAuthenticationFlow();
-  const { user } = useContext(UserContext) as UserContextType;
+  const { user, logout } = useContext(UserContext) as UserContextType;
   const [name, setName] = useState<string>("");
   const [userInfo, setUserInfo] = useState<any>(null);
   const [overview, setOverview] = useState<any>(null);
@@ -141,7 +141,7 @@ const Home: NextPage = () => {
     <div className={styles.container}>
       {user && (
         <>
-          <Welcome name={name} type={user.tipo} />
+          <Welcome name={name} type={user.tipo} logout={logout} />
           <Container>
             <>
               {showUserOverView}

@@ -52,7 +52,10 @@ export const ModalStyles = styled.div`
 `;
 
 export const ModalContent = styled.div`
-  height: auto;
+  overflow-y: scroll;
+  max-height: 80vh;
   width: 100%;
+  // display: flex;
+  // flex-direction: column;
   justify-content: center;
 `;
