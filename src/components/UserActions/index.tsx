@@ -36,7 +36,7 @@ export const UserActions: FC<Props> = ({ user }) => {
     Escuderia: [
       {
         label: "Consultar por Forename",
-        modal: () => <ConsultPilot />,
+        modal: () => <ConsultPilot user={user} />,
       },
     ],
     Piloto: null,

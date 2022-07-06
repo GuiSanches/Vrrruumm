@@ -12,5 +12,6 @@ export const Container = styled.div`
   color: #212529;
   padding: 1em;
   margin-top: 1em;
-  justify-content: center;
+  justify-content: space-around;
+  flex-direction: row;
 `;
